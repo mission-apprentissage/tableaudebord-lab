@@ -9,9 +9,7 @@
 ## 1. Test application
 ### Install requirements
 ```shell
-$ cd server && python -m venv .venv && source .venv/bin/activate
-$ pip install -r requirements.txt
-$ python -m spacy download fr_core_news_lg
+$ cd server && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python -m spacy download fr_core_news_lg
 ```
 
 ### Running development server

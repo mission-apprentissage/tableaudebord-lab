@@ -81,7 +81,7 @@ class Classifier:
         # Normalize embeddings
         embeddings = normalize(embeddings)
 
-        return embeddings
+        return embeddings.tolist()
 
     # Classifier export function
     def save_model(self):
@@ -152,7 +152,7 @@ class Classifier:
             dict: A dictionary containing the input texts, predicted multi-labels (OHE).
         """
         embeddings = self.encoding(texts)
-        labels = self.classifier.predict(embeddings)
+        labels = self.classifier.predict(embeddings).tolist()
         return {'model': self.version,
                 'texts': texts, 
                 'labels': labels}
