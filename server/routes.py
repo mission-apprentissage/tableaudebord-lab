@@ -29,8 +29,7 @@ def register_routes(app, get_model):
         logger.info("Model version loaded: %s", version)
         return jsonify({'model': version}), 200
 
-        @app.route('/model/score', methods=['POST'])
-
+    @app.route('/model/score', methods=['POST'])
     def score():
         if not request.is_json:
             logger.warning("Non-JSON request received on /score")
