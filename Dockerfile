@@ -22,8 +22,10 @@ RUN pip install --prefer-binary --no-compile --no-deps \
     -r requirements.txt \
     && pip install --no-compile \
     -r requirements.txt \
-    && rm -rf /root/.cache/pip/* /tmp/* \
-    && python -m spacy download fr_core_news_lg
+    && rm -rf /root/.cache/pip/* /tmp/*
+    
+# Download spacy library
+RUN python3 -m spacy download fr_core_news_lg
 
 # Copy application code last for better caching
 COPY server/ .

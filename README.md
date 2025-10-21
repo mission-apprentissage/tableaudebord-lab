@@ -49,16 +49,28 @@ $ deactivate
 ```
 
 ## 2. Create docker image
-### Build image
+### Build image (server)
 ```shell
 $ docker buildx build --platform linux/amd64 -t tba-classifier .
 ```
 
-### Run image
+### Run image (server)
 ```shell
 docker run --rm -it -p 8000:8000 --name classifier tba-classifier
 ```
 
-### Test docker endpoint
+### Build image (local)
+```shell
+$ docker buildx build -f Dockerfile.local --platform linux/amd64 -t tba-classifier.local .
+```
 
+### Run image (local)
+```shell
+docker run --rm -it -p 8000:8000 --name classifier tba-classifier.local .
+```
+
+### Test docker endpoint
+```shell
+$ curl http://172.17.0.2:8000/score -X POST -H 'Content-Type: application/json' -d '{"version":"2025-10-20", "texts": ["COLLABORATEUR PAIE ", "BACHELOR EN SCIENCES DU MANAGEMENT - DIPLOME D’ETUDES SUPERIEURES DE GESTION ET COMMERCE INTERNATIONAL DE L’ESC DIJON", "SPECIALITE EDUCATEUR SPORTIF, MENTION ACTIVITES EQUESTRES"]}'
+```
 
