@@ -6,7 +6,7 @@
 
 ## Documentation
 
-## 1. Test application
+## 1. Local server
 ### Install requirements
 ```shell
 $ cd server && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python -m spacy download fr_core_news_lg
@@ -41,3 +41,24 @@ $ curl http://127.0.0.1:8000/model/version
 #### Score texts
 ```shell
 $ curl http://127.0.0.1:8000/model/score -X POST -H 'Content-Type: application/json' -d '{"version":"2025-10-20", "texts": ["COLLABORATEUR PAIE ", "BACHELOR EN SCIENCES DU MANAGEMENT - DIPLOME D’ETUDES SUPERIEURES DE GESTION ET COMMERCE INTERNATIONAL DE L’ESC DIJON", "SPECIALITE EDUCATEUR SPORTIF, MENTION ACTIVITES EQUESTRES"]}'
+```
+
+### Exit virtual environment
+```shell
+$ deactivate
+```
+
+## 2. Create docker image
+### Build image
+```shell
+$ docker buildx build --platform linux/amd64 -t tba-classifier .
+```
+
+### Run image
+```shell
+docker run --rm -it -p 8000:8000 --name classifier tba-classifier
+```
+
+### Test docker endpoint
+
+
