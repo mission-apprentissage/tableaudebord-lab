@@ -39,3 +39,7 @@ $ curl http://127.0.0.1:8000/model/version
 
 {"model":"2025-10-20"}
 ```
+
+#### Score texts
+```shell
+$ curl http://127.0.0.1:8000/model/score -X POST -H 'Content-Type: application/json' -d '{"version":"2025-10-20", "texts": ["COLLABORATEUR PAIE ", "BACHELOR EN SCIENCES DU MANAGEMENT - DIPLOME D’ETUDES SUPERIEURES DE GESTION ET COMMERCE INTERNATIONAL DE L’ESC DIJON", "SPECIALITE EDUCATEUR SPORTIF, MENTION ACTIVITES EQUESTRES"]}'

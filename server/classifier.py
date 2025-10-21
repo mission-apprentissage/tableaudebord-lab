@@ -33,7 +33,7 @@ class Classifier:
         classifier: The trained classifier model.
         dataset: The dataset used for training.
     """
-    def __init__(self, version="2025-08-06", 
+    def __init__(self, version="2025-10-20", 
                  lang_model="almanach/camembertav2-base",
                  token=""):
         """
@@ -45,7 +45,7 @@ class Classifier:
         """
         self.version = version
         self.model_file = f"knn-clf-formation-domain-{version}.pkl"
-        self.repo_id = f"tableau-de-bord-apprentissage/{version}"
+        self.repo_id = f"tableaudebord-apprentissage/{version}"
         self.token = token
         self.classifier = None
         self.dataset = None
