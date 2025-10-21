@@ -1,6 +1,5 @@
 from transformers import AutoTokenizer, AutoModel
 import torch
-import pickle
 import pandas as pd
 from datasets import Dataset, load_dataset
 import pickle as pickle
@@ -74,7 +73,7 @@ class Classifier:
             doc = self.nlp(text.lower())
             return " ".join([token.lemma_ for token in doc if token.is_alpha and not token.is_stop and not token.is_punct and not token.like_num])
 
-        cleaned_texts = [preprocess(t) for t in texts]
+        cleaned_texts = [preprocess(text) for text in texts]
 
         # Embeddings texts
         embeddings = self.model.encode(cleaned_texts)
@@ -84,22 +83,76 @@ class Classifier:
 
         return embeddings
 
-    # Classifier function
-    def score(self, text):
+    # Classifier export function
+    def save_model(self):
         """
-        Predicts the label and scores for the input text using the classifier model.
-
-        Args:
-            text (str): The input text to be classified.
+        Save a classifier model to the HuggingFace Hub.
 
         Returns:
-            dict: A dictionary containing the input text, predicted label, and scores for each class.
+            url: The URL of the saved model.
         """
-        embeddings = self.encoding([text])
-        x = pd.DataFrame([embeddings[0]])
-        y_label = self.classifier.predict(x)[0]
-        y_prob = self.classifier.predict_proba(x)[0].tolist()
-        y_prob = [round(i, 4) for i in y_prob]
+        logger.info(f"Save model locally...")
+        local_repo = mkdtemp(prefix="tba-")
+        with open(Path(local_repo) / self.model_file, mode="bw") as f:
+            pickle.dump(self.classifier, file=f)
+
+        api = HfApi()
+
+        # Delete previous repo with the same name
+        try:
+            logger.info(f"Deleting existing repo: {self.repo_id}")
+            api.delete_repo(repo_id=self.repo_id, token=self.token)
+        except:
+            pass
+
+        # Create repo
+        logger.info(f"Creating repo: {self.repo_id}")
+        api.create_repo(repo_id=self.repo_id, token=self.token, repo_type="model", private=True)
+
+        # Upload model
+        logger.info(f"Uploading model: {local_repo}")
+        out = api.upload_folder(
+            folder_path=local_repo,
+            repo_id=self.repo_id,
+            token=self.token,
+            repo_type="model",
+            commit_message=f"pushing model '{self.version}' SVC with camembert v2 embeddings",
+        )
+        url = f"https://huggingface.co/{self.repo_id}"
+        logger.info(f"Model ready on: {url}")
+        return url
+
+    # Classifier loader function
+    def load_model(self):
+        """
+        Load a classifier model from the HuggingFace Hub.
+
+        Returns:
+            model: The loaded classifier model.
+        """
+        # Download model
+        logger.info(f"Downloading model: {self.repo_id}")
+        model_dump = hf_hub_download(repo_id=self.repo_id, filename=self.model_file, token=self.token)
+        # print(f"- Model downloaded to: {model_dump}")
+
+        # Reload pickle model
+        with open(model_dump, 'rb') as f:
+            self.classifier = pickle.load(f)
+        logger.info(f"Classifier model ready.")
+
+    # Classifier function
+    def score(self, texts):
+        """
+        Predicts the multi-labels for the inputs texts using the classifier model.
+
+        Args:
+            texts (list(str)): List of texts to be classified.
+
+        Returns:
+            dict: A dictionary containing the input texts, predicted multi-labels (OHE).
+        """
+        embeddings = self.encoding(texts)
+        labels = self.classifier.predict(embeddings)
         return {'model': self.version,
-                'text': text, 'label': y_label, 
-                'scores': {'cfa': y_prob[0], 'entreprise': y_prob[1], 'entreprise_cfa': y_prob[2]}}
+                'texts': texts, 
+                'labels': labels}

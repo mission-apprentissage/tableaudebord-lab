@@ -26,3 +26,16 @@ $ curl http://127.0.0.1:8000/
 
 {"status":"TBA classifier API ready."}
 ```
+#### Load model version
+```shell
+curl http://127.0.0.1:8000/model/load?version='2025-10-20'
+
+{"model":"2025-10-20"}
+```
+
+#### Check model version
+```shell
+$ curl http://127.0.0.1:8000/model/version
+
+{"model":"2025-10-20"}
+```
