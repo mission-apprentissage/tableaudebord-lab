@@ -136,7 +136,7 @@ class Classifier:
             dict: A dictionary containing the probability scores.
         """
         features = self.extract_features(data)
-        y_probs = classifier.predict_proba(features)[:, 1]
+        y_probs = self.classifier.predict_proba(features)[:, 1]
 
         return {'model': self.version,
                 'scores': y_probs.tolist()}

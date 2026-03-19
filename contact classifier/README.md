@@ -52,5 +52,30 @@ $ curl http://127.0.0.1:8000/
 ```shell
 $ curl http://127.0.0.1:8000/model/version
 
-{"model":"2025-12-18"}
+{"model":"2026-03-16"}
+```
+
+#### Load specific model version
+
+```shell
+$ curl http://127.0.0.1:8000/model/load?version=2026-03-16
+
+{"model":"2026-03-16"}
+```
+
+#### Score texts (without version - uses auto-loaded model)
+```shell
+$ curl http://127.0.0.1:8000/model/score \
+  -X POST \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "data": [{
+        "apprenant.date_de_naissance": "2002-07-28T00:00:00.000Z",
+        "formation.date_inscription": "2025-11-10T00:00:00.000Z",
+        "formation.date_fin": "2027-05-09T00:00:00.000Z",
+        "formation.date_entree": "2025-11-10T00:00:00.000Z",
+        "contrat.date_debut": "2025-11-10T00:00:00.000Z",
+        "contrat.date_fin": "2027-05-09T00:00:00.000Z",
+        "contrat.date_rupture": "2025-12-15T00:00:00.000Z"}]
+    }'
 ```
