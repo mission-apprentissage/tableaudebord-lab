@@ -27,12 +27,9 @@ dev-up: ## Start development services with live reload (Docker)
 down: ## Stop all services
 	docker-compose down
 
-test: ## Test the /model/scores endpoint using validation dataset (requires server to be running)
-	@echo "Testing batch classification with validation dataset..."
-	jq '{items: [to_entries[] | {id: (.key | tostring), workplace_name: .value.workplace_name, workplace_description: .value.workplace_description, offer_title: .value.offer_title, offer_description: .value.offer_description}]}' server/data/validation-dataset.json \
-		| curl -X POST http://localhost:8000/model/scores \
-		-H 'Content-Type: application/json' \
-		-d @-
+test: ## Test the /model/score endpoint using test dataset (requires server to be running)
+	@echo "Testing batch classification..."
+	jq '{data: .}' server/data/test-dataset.json | curl -X POST http://localhost:8000/model/score -H 'Content-Type: application/json' -d @-
 
 health: ## Check API health
 	curl -f http://localhost:8000/ || echo "Service not available"
